@@ -9,35 +9,66 @@ const TelegramBot = require('node-telegram-bot-api');
 const token = '5005587215:AAEN67HmF8i58sd-XjXdy49IwQtOMl-IA34'
 const bot = new TelegramBot(token, {polling: true});
 
-
+state = 0
 // bots
 bot.onText(/\/start/, (msg) => { 
     console.log(msg)
     bot.sendMessage(
         msg.chat.id,
-        `hello ${msg.chat.first_name}, welcome...\n
-        click /menu to main menu`
-    );   
+        `Hello ! ${msg.chat.first_name}, welcome...\n
+        click /predict`
+    ); 
+    state = 0;
 });
-
-bot.onText(/\/menu/, (msg) => { 
-    console.log(msg)
+// input requires x1 , x2 dan x3
+bot.onText(/\/predict/, (msg) => { 
     bot.sendMessage(
         msg.chat.id,
-        `this is your main menu`
-    );   
+        `Masukan nilai x1|x2|x3 contohnya 3|3|3`
+    );
+    state = 1;
 });
 
+bot.on('message', (msg) => {
+    if(state == 1){
+        s = msg.text.split("|");
+        x1 = s[0]
+        x2 = s[1]
+        x3 = s[2]
+        model.predict(
+            [
+                parseFloat(s[0]), // string to float
+                parseFloat(s[1]),
+                parseFloat(s[2])
+            ]
+        ).then((jres)=>{
+                bot.sendMessage(
+                    msg.chat.id,
+                    `Prediksi nilai y1 yaitu ${jres[0]}`
+                );
+                bot.sendMessage(
+                    msg.chat.id,
+                    `Prediksi nilai y2 yaitu ${jres[1]}`
+                ); 
+                bot.sendMessage(
+                    msg.chat.id,
+                    `Prediksi nilai y3 yaitu ${jres[2]}`
+                );
+        })
+    }else{
+        state = 0;
+    }
+})
 // routers
-r.get('/prediction/:i/:r', function(req, res, next) {    
+r.get('/predict/:x1/:x2/:x3', function(req, res, next) {
     model.predict(
         [
-            parseFloat(req.params.i), // string to float
-            parseFloat(req.params.r)
-        ]
+            parseFloat(req.params.x1),// string float
+            parseFloat(req.params.x2),
+            parseFloat(req.params.x3)
+        ]    
     ).then((jres)=>{
         res.json(jres);
     })
 });
-
 module.exports = r;
