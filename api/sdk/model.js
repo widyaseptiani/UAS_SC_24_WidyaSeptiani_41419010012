@@ -25,7 +25,7 @@ async function predict(data){
 
     try{
         // path load in public access => github
-        const path = 'https://raw.githubusercontent.com/AchmadBurhan10/UAS_SC_18_Achmad-Burhanudin_41419010005/main/public/predict_model/model.json?token=5007720080:AAGDWoTJ2HXF6zeiZ3C9znAcvF1tsJS31Lc';
+        const path = 'https://raw.githubusercontent.com/widyaseptiani/UAS_SC_24_WidyaSeptiani_41419010012/main/public/ex_model/model.json?token=5007720080:AAGDWoTJ2HXF6zeiZ3C9znAcvF1tsJS31Lc';
         const model = await tf.loadGraphModel(path);
         
         predict = model.predict(
